@@ -7,20 +7,35 @@ const { db } = require("./src/config/firebase");
 const app = express();
 
 const allowedOrigins = [
+  "https://sector-delivery-app.vercel.app",
   "https://sector-delivery-42v1mlkpr-deicys-projects-ea3567ec.vercel.app",
   "http://localhost:3000",
 ];
 
+app.use((req, res, next) => {
+  console.log("Origen de la petición:", req.headers.origin);
+  next();
+});
+
 const corsOptions = {
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin) return callback(null, true);
+
+    if (
+      allowedOrigins.some(
+        (allowed) =>
+          origin === allowed || origin.includes(allowed.replace("https://", ""))
+      )
+    ) {
+      console.log(`Origen permitido: ${origin}`);
       callback(null, true);
     } else {
-      callback(new Error("Bloqueado por CORS"));
+      console.warn(`Origen bloqueado: ${origin}`);
+      callback(new Error("Not allowed by CORS"));
     }
   },
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type"],
   credentials: true,
 };
 
