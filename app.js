@@ -3,8 +3,9 @@ const express = require("express");
 const cors = require("cors");
 const sectorRoutes = require("./src/routes/sectorRoutes");
 
+const admin = require("firebase-admin");
+
 const app = express();
-const fs = require("fs");
 
 const firebaseCredentials = {
   type: "service_account",
@@ -20,10 +21,11 @@ const firebaseCredentials = {
   universe_domain: process.env.FIREBASE_UNIVERSE_DOMAIN || "googleapis.com",
 };
 
-fs.writeFileSync(
-  "./firebase-credentials.json",
-  JSON.stringify(firebaseCredentials)
-);
+admin.initializeApp({
+  credential: admin.credential.cert(firebaseCredentials),
+});
+
+const db = admin.firestore();
 
 app.use(cors());
 app.use(express.json());
