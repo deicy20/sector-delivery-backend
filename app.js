@@ -21,7 +21,7 @@ const firebaseCredentials = {
 };
 
 fs.writeFileSync(
-  "./src/firebase-credentials.json",
+  "./firebase-credentials.json",
   JSON.stringify(firebaseCredentials)
 );
 
